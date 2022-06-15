@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  registry:
+    restart: always
+    image: registry:2
+    ports:
+      - 5000:5000
+    environment:
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/fullchain.pem
+      REGISTRY_HTTP_TLS_KEY: /certs/key.pem
+      # Set to the port that your webapp listens on
+      VIRTUAL_PORT: 5000
+      # Can be comma-separated list
+      VIRTUAL_HOST: domain.example.com
+      # The domain for the cert, can also be comma-separated
+      LETSENCRYPT_HOST: domain.example.com
+      # Your email for the cert
+      LETSENCRYPT_EMAIL: ivhani@example.com
+    volumes:
+      - /opt/docker/registry/data:/var/lib/registry
+      - /opt/docker/registry/auth:/auth
+      - /opt/docker/ssl/letsencrypt-nginx-sidecar/sidecar/certs/domain.example.com:/certs
+
+  portainer:
+    image: portainer/portainer
+    environment:
+      VIRTUAL_PORT: 9000
+      VIRTUAL_HOST: domain.example.com
+      LETSENCRYPT_HOST: domain.example.com
+      LETSENCRYPT_EMAIL: ivhani@example.com
+    volumes:
+      - /opt/docker/portainer:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/docker/ssl/letsencrypt-nginx-sidecar/sidecar/certs/domain.example.com:/certs
+    ports:
+      - "9000:9000"
+networks:
+  default:
+    external:
+      name: letsencrypt
