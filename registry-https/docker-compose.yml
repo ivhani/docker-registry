@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  registry:
+    restart: always
+    image: registry:2
+    ports:
+      - "${IMDR_VIRTUAL_PORT}:5000"
+    environment:
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/fullchain.pem
+      REGISTRY_HTTP_TLS_KEY: /certs/key.pem
+      # Set to the port that your webapp listens on
+      VIRTUAL_PORT: ${IMDR_VIRTUAL_PORT}
+      # Can be comma-separated list
+      VIRTUAL_HOST: ${IMDR_VIRTUAL_HOST}
+      # The domain for the cert, can also be comma-separated
+      LETSENCRYPT_HOST: ${IMDR_VIRTUAL_HOST}
+      # Your email for the cert
+      LETSENCRYPT_EMAIL: ${IMDR_LETSENCRYPT_EMAIL}
+    volumes:
+      - /opt/docker/registry/data:/var/lib/registry
+      - /opt/docker/registry/auth:/auth
+      - /opt/docker/ssl/letsencrypt-nginx-sidecar/sidecar/certs/${IMDR_VIRTUAL_HOST}:/certs
+
+networks:
+  default:
+    external:
+      name: letsencrypt
