@@ -21,9 +21,9 @@ services:
       # Your email for the cert
       LETSENCRYPT_EMAIL: ${IMDR_LETSENCRYPT_EMAIL}
     volumes:
-      - /opt/docker/registry/data:/var/lib/registry
-      - /opt/docker/registry/auth:/auth
-      - /opt/docker/ssl/letsencrypt-nginx-sidecar/sidecar/certs/${IMDR_VIRTUAL_HOST}:/certs
+      - "${IMDR_REGISTRY_VOLUME_HOME}:/var/lib/registry"
+      - "${IMDR_AUTH_HOME}:/auth"
+      - "${IMDR_CERTS_HOME}:/certs"
 
 networks:
   default:
