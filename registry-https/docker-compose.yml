@@ -31,7 +31,7 @@ services:
       - 8080:80
     environment:
       REGISTRY_URL: "https://${IMDR_VIRTUAL_HOST}:${IMDR_VIRTUAL_PORT}"
-      SINGLE_REGISTRY: true
+      SINGLE_REGISTRY: "true"
     depends_on:
       - registry
 
