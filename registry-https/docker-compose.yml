@@ -25,6 +25,16 @@ services:
       - "${IMDR_AUTH_HOME}:/auth"
       - "${IMDR_CERTS_HOME}:/certs"
 
+  ui:
+    image: joxit/docker-registry-ui:latest
+    ports:
+      - 8080:80
+    environment:
+      REGISTRY_URL: "https://${IMDR_VIRTUAL_HOST}:${IMDR_VIRTUAL_PORT}"
+      SINGLE_REGISTRY: true
+    depends_on:
+      - registry
+
 networks:
   default:
     external:
